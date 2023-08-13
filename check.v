@@ -10,7 +10,7 @@ module top(
     input wire [2:0] addrI, // 8 instructions max
     input wire [3:0] dataI, // max matrix size = 4 x 16
     input wire enI,
-    input wire [3:0] addrO, // 2^4 = 4 x 4 = 16 possibilities
+    input wire [6:0] addrO, // 16 * 8 max matrix possibilities
     output wire [31:0] dataO, // 32 bit result for each processor
     input wire ap_start, // pulse start
     output reg ap_done, // level end 
@@ -79,7 +79,7 @@ module top(
         .c6(outO[6]),
         .c7(outO[7]),
         .c8(outO[8]),
-        .c9(outO[0]),
+      	.c9(outO[9]),
         .c10(outO[10]),
         .c11(outO[11]),
         .c12(outO[12]),
@@ -110,7 +110,7 @@ module top(
         .c6(outO[6]),
         .c7(outO[7]),
         .c8(outO[8]),
-        .c9(outO[0]),
+      	.c9(outO[9]),
         .c10(outO[10]),
         .c11(outO[11]),
         .c12(outO[12]),
@@ -141,7 +141,7 @@ module top(
         end
         else begin
             if (running == 1) begin
-          $display("rst = %b, addrA = %d, dataA = %d, enA = %b, addrB = %d, dataB = %d, enB = %b, addrI = %d, dataI = %d, enI = %d, addrO = %d, renI = %d, currInstruction = %d, counter = %d", rst, addrA, dataA, enA, addrB, dataB, enB, addrI, dataI, enI, addrO, renI, currInstruction, counter);
+          //$display("rst = %b, addrA = %d, dataA = %d, enA = %b, addrB = %d, dataB = %d, enB = %b, addrI = %d, dataI = %d, enI = %d, addrO = %d, renI = %d, currInstruction = %d, counter = %d", rst, addrA, dataA, enA, addrB, dataB, enB, addrI, dataI, enI, addrO, renI, currInstruction, counter);
                 if (started == 0) begin // step 2, read instruction
                     wenO <= 0;
                     renI <= 1;
@@ -150,18 +150,22 @@ module top(
                 end
                 else if (renI == 1) begin // if just read instruction, dont read more and set counter
                     renI <= 0;
-                    counter <= currInstruction + 3;
+                    counter <= currInstruction + 7;
                     if (currInstruction == 0) begin
                         ap_done <= 1;
                         running <= 0;
                     end
                   $display("PATHB");
                 end
-                else if (counter != 0) begin // do N+3 clock cycles
+              else if (counter != 0) begin // do N+7 clock cycles
                     renA <= 1;
                     renB <= 1;
                     counter <= counter - 1;
                   $display("pathC");
+                //for (int i = 0; i <= 15; i = i + 1) begin
+                  //  $display("outO[%0d] = %d", i, outO[i]);
+                //end
+
                 end
                 else if (counter == 0) begin // write to memory
                     renA <= 0;
@@ -226,11 +230,11 @@ module output_memory(
     input wire [31:0] c13,
     input wire [31:0] c14,
     input wire [31:0] c15,
-    input wire [3:0] addrO, // for reading (2^4 = 16 memory locations)
+    input wire [6:0] addrO, // for reading (2^4  * 8 matrices= 2^7 memory locations)
     output reg [31:0] dataO // for reading
 );
 
-    reg [31:0] memory [0:15];
+  reg [31:0] memory [0:127]; // needs 16 * 8 because 8 max instructions
     reg [6:0] counter = 0; // 2^4 size matrix * 2^3 matrices
 
     always @(posedge clk) begin
@@ -285,7 +289,9 @@ module input_memory(
         end
         else begin
             if (write) begin
-                memory[addr % 4][addr / 4] <= data;
+              memory[addr / 256][addr % 256] <= data;
+              //$display("input write: addr / 256 = %d, addr mod 256 = %d, data = %d", addr / 256, addr % 256, data);
+
             end
             if (read) begin
                 out0 <= memory[0][counter];
@@ -293,6 +299,7 @@ module input_memory(
                 out2 <= memory[2][counter];
                 out3 <= memory[3][counter];
                 counter <= counter + 1;
+              $display("input read: out0 = %d, out1 = %d, out2 = %d, out3 = %d, counter = %d", out0, out1, out2, out3, counter);
             end
         end
     end
@@ -308,14 +315,17 @@ module processor(clk, rst, in_a, in_b, out_a, out_b, out_c);
 
     always @(posedge clk) begin
         if (rst) begin
-            out_a = 0;
-            out_b = 0;
-            out_c = 0;
+            out_a <= 0;
+            out_b <= 0;
+            out_c <= 0;
         end
         else begin
-            out_c = out_c + in_a*in_b;
-            out_a = in_a;
-            out_b = in_b;
+			if ((in_a !== 16'bx) && (in_b !== 16'bx)) begin
+              out_c <= out_c + in_a*in_b;
+              out_a <= in_a;
+              out_b <= in_b;
+              //$display("outc = %d, in_a %d, in_b %d", out_c, in_a, in_b);
+            end
         end
     end
 endmodule

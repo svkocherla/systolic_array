@@ -7,13 +7,13 @@ module testbench();
     reg [3:0] dataI;
     reg [15:0] dataA, dataB;
     wire [31:0] dataO;
-    reg [3:0] addrO;
+    reg [6:0] addrO;
     reg enA, enB, enI;
     reg ap_start;
     wire ap_done;
 
   	reg [3:0] instructions[7:0]; // 8 instructions
-    reg [15:0] matrix[0:3][0:6]; // 4 by 2 array
+  reg [15:0] matrix[0:3][0:255]; // 4 by 2 array
     
   wire [3:0] check;
   
@@ -54,7 +54,7 @@ module testbench();
       
 		// init arrays
         for (i = 0; i <= 3; i = i + 1) begin // make array all 
-            for (j = 0; j <= 6; j = j + 1) begin
+          for (j = 0; j <= 20; j = j + 1) begin
                 matrix[i][j] = 0;
             end
         end
@@ -70,7 +70,7 @@ module testbench();
         enA = 1;
         enB = 1;
         for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-            for (j = 0; j <= 6; j = j + 1) begin
+        	for (j = 0; j <= 20; j = j + 1) begin
                 dataA = matrix[i][j];
                 dataB = matrix[i][j];
                 addrA = 256 * i + j; // length * row + col
