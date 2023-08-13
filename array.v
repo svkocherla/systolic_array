@@ -65,23 +65,23 @@ module systolic_array(
 
     //define processors pe[i][j] = in_a[i][j], in_b[i][j], out_a[i][j+1], out_b[i+1][j], out_c[i][j]
     processor pe0 (.clk(clk), .rst(rst), .in_a(in_a[0]), .in_b(in_b[0]), .out_a(a[0][1]), .out_b(b[1][0]), .out_c(c0)); // (0,0)
-    processor pe1 (.clk(clk), .rst(rst), .in_a(a[0][1]), .in_b(in_b[1]), .out_a(a[0][2]), .out_b(b[2][0]), .out_c(c1)); // (0,1)
-    processor pe2 (.clk(clk), .rst(rst), .in_a(a[0][2]), .in_b(in_b[2]), .out_a(a[0][3]), .out_b(b[3][0]), .out_c(c2)); // (0,2)
-    processor pe3 (.clk(clk), .rst(rst), .in_a(a[0][3]), .in_b(in_b[3]), .out_a(a[0][4]), .out_b(b[4][0]), .out_c(c3)); // (0,3)
+    processor pe1 (.clk(clk), .rst(rst), .in_a(a[0][1]), .in_b(in_b[1]), .out_a(a[0][2]), .out_b(b[1][1]), .out_c(c1)); // (0,1)
+    processor pe2 (.clk(clk), .rst(rst), .in_a(a[0][2]), .in_b(in_b[2]), .out_a(a[0][3]), .out_b(b[1][2]), .out_c(c2)); // (0,2)
+    processor pe3 (.clk(clk), .rst(rst), .in_a(a[0][3]), .in_b(in_b[3]), .out_a(a[0][4]), .out_b(b[1][3]), .out_c(c3)); // (0,3)
 
-    processor pe4 (.clk(clk), .rst(rst), .in_a(in_a[1]), .in_b(b[1][0]), .out_a(a[1][1]), .out_b(b[1][1]), .out_c(c4)); // (1,0)
+    processor pe4 (.clk(clk), .rst(rst), .in_a(in_a[1]), .in_b(b[1][0]), .out_a(a[1][1]), .out_b(b[2][0]), .out_c(c4)); // (1,0)
     processor pe5 (.clk(clk), .rst(rst), .in_a(a[1][1]), .in_b(b[1][1]), .out_a(a[1][2]), .out_b(b[2][1]), .out_c(c5)); // (1,2)
-    processor pe6 (.clk(clk), .rst(rst), .in_a(a[1][2]), .in_b(b[1][2]), .out_a(a[1][3]), .out_b(b[3][1]), .out_c(c6)); // (1,2)
-    processor pe7 (.clk(clk), .rst(rst), .in_a(a[1][3]), .in_b(b[1][3]), .out_a(a[1][4]), .out_b(b[4][1]), .out_c(c7)); // (1,3)
+    processor pe6 (.clk(clk), .rst(rst), .in_a(a[1][2]), .in_b(b[1][2]), .out_a(a[1][3]), .out_b(b[2][2]), .out_c(c6)); // (1,2)
+    processor pe7 (.clk(clk), .rst(rst), .in_a(a[1][3]), .in_b(b[1][3]), .out_a(a[1][4]), .out_b(b[2][3]), .out_c(c7)); // (1,3)
 
-    processor pe8  (.clk(clk), .rst(rst), .in_a(in_a[2]), .in_b(b[2][0]), .out_a(a[2][1]), .out_b(b[1][2]), .out_c(c8)); // (2,0)
-    processor pe9  (.clk(clk), .rst(rst), .in_a(a[2][1]), .in_b(b[2][1]), .out_a(a[2][2]), .out_b(b[2][2]), .out_c(c9)); // (2,1)
+    processor pe8  (.clk(clk), .rst(rst), .in_a(in_a[2]), .in_b(b[2][0]), .out_a(a[2][1]), .out_b(b[3][0]), .out_c(c8)); // (2,0)
+    processor pe9  (.clk(clk), .rst(rst), .in_a(a[2][1]), .in_b(b[2][1]), .out_a(a[2][2]), .out_b(b[3][1]), .out_c(c9)); // (2,1)
     processor pe10 (.clk(clk), .rst(rst), .in_a(a[2][2]), .in_b(b[2][2]), .out_a(a[2][3]), .out_b(b[3][2]), .out_c(c10)); // (2,2)
-    processor pe11 (.clk(clk), .rst(rst), .in_a(a[2][3]), .in_b(b[2][3]), .out_a(a[2][4]), .out_b(b[4][2]), .out_c(c11)); // (2,3)
+    processor pe11 (.clk(clk), .rst(rst), .in_a(a[2][3]), .in_b(b[2][3]), .out_a(a[2][4]), .out_b(b[3][3]), .out_c(c11)); // (2,3)
 
-    processor pe12 (.clk(clk), .rst(rst), .in_a(in_a[3]), .in_b(b[3][0]), .out_a(a[3][1]), .out_b(b[1][3]), .out_c(c12)); // (3,0)
-    processor pe13 (.clk(clk), .rst(rst), .in_a(a[3][1]), .in_b(b[3][1]), .out_a(a[3][2]), .out_b(b[2][3]), .out_c(c13)); // (3,1)
-    processor pe14 (.clk(clk), .rst(rst), .in_a(a[3][2]), .in_b(b[3][2]), .out_a(a[3][3]), .out_b(b[3][3]), .out_c(c14)); // (3,2)
+    processor pe12 (.clk(clk), .rst(rst), .in_a(in_a[3]), .in_b(b[3][0]), .out_a(a[3][1]), .out_b(b[4][0]), .out_c(c12)); // (3,0)
+    processor pe13 (.clk(clk), .rst(rst), .in_a(a[3][1]), .in_b(b[3][1]), .out_a(a[3][2]), .out_b(b[4][1]), .out_c(c13)); // (3,1)
+    processor pe14 (.clk(clk), .rst(rst), .in_a(a[3][2]), .in_b(b[3][2]), .out_a(a[3][3]), .out_b(b[4][2]), .out_c(c14)); // (3,2)
     processor pe15 (.clk(clk), .rst(rst), .in_a(a[3][3]), .in_b(b[3][3]), .out_a(a[3][4]), .out_b(b[4][3]), .out_c(c15)); // (3,3)
 
 endmodule

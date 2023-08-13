@@ -38,6 +38,7 @@ module testbench();
 
 
     integer i,j;
+  reg [15:0] mval = 1;
 
     initial begin
         clk = 0;
@@ -47,10 +48,10 @@ module testbench();
         for (i = 0; i <= 7; i = i + 1) begin
           instructions[i] = 0;
         end
-        instructions[0] = 4;
+      instructions[0] = 4;
         instructions[1] = 0;
-        instructions[2] = 2;
-        instructions[3] = 1;
+        instructions[2] = 0;
+        instructions[3] = 0;
       
 		// init arrays
         for (i = 0; i <= 3; i = i + 1) begin // make array all 
@@ -60,11 +61,12 @@ module testbench();
         end
 
         for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-            for (j = 0; j <= 3; j = j + 1) begin
-                matrix[i][i+j] = 16'h01;
+          for (j = 0; j <= 3; j = j + 1) begin
+            matrix[i][i+j] = mval;
+            mval = mval + 1;
             end
         end
-      
+      //matrix[1][1] = 1;
       
       	// write to memA/memB
         enA = 1;
