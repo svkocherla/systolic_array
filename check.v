@@ -14,7 +14,7 @@ module top(
     output wire [31:0] dataO, // 32 bit result for each processor
     input wire ap_start, // pulse start
     output reg ap_done, // level end 
-    output wire [3:0] currInstruction
+  	output wire [3:0] currInstruction // max matrix size is 31, change to [4:0]
 );
 
     wire [15:0] outA [0:3];
@@ -29,15 +29,13 @@ module top(
     reg wenO = 0; // write enable O
     reg rst_sa = 0;
 
-    // wire [3:0] currInstruction = 0; // defined here
-
     input_memory memA (
         .clk(clk),
         .rst(rst),
         .addr(addrA),
         .write(enA),
         .data(dataA),
-        .read(renA), // figure it out
+        .read(renA),
         .out0(outA[0]),
         .out1(outA[1]),
         .out2(outA[2]),
@@ -49,7 +47,7 @@ module top(
         .addr(addrB),
         .write(enB),
         .data(dataB),
-        .read(renB), // figure it out
+        .read(renB), 
         .out0(outB[0]),
         .out1(outB[1]),
         .out2(outB[2]),
@@ -60,7 +58,7 @@ module top(
         .clk(clk),
         .rst(rst),
         .en(enI),
-        .read(renI), // change it
+        .read(renI),
         .addrI(addrI),
         .dataI(dataI),
         .value(currInstruction)
@@ -136,7 +134,7 @@ module top(
     reg started = 0;
     reg [4:0] counter = 0;
   
-  always @(negedge clk or ap_start) begin // needs to be negedge for some reason
+  always @(negedge clk or ap_start) begin
         if (ap_start) begin
             running <= 1;
         end
@@ -257,7 +255,7 @@ module output_memory(
             memory[counter + 14] <= c14;
             memory[counter + 15] <= c15;
             counter <= counter + 16;
-            $display("en = %b, read = %b, c0 = %d, c1 = %d, c2 = %d, c3 = %d, c4 = %d, c5 = %d, c6 = %d, c7 = %d, c8 = %d, c9 = %d, c10 = %d, c11 = %d, c12 = %d, c13 = %d, c14 = %d, c15 = %d", en, read, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15);
+            //$display("en = %b, read = %b, c0 = %d, c1 = %d, c2 = %d, c3 = %d, c4 = %d, c5 = %d, c6 = %d, c7 = %d, c8 = %d, c9 = %d, c10 = %d, c11 = %d, c12 = %d, c13 = %d, c14 = %d, c15 = %d", en, read, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15);
 
         end
         if (read) begin

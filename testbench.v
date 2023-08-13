@@ -1,5 +1,97 @@
 
 module testbench();
+  // read tests from file
+  // testcase has n * 2 matrices of sizes x_1...x_n, and a result of size n*16
+  // for each test, generate a matrix and instructions
+	  // pass into test module, along with result matrix
+  
+  integer i,j;
+  integer mval = -1;
+  
+  reg [3:0] n = 5; // number of instructions
+  reg [3:0] instructions[0:7]; // 7 instructions max, last is 0
+  reg [15:0] matrix[0:3][0:255]; // total memory size, 4 by x_1 + x_2...x_n + padding
+  reg [31:0] result[0:127]; // stores 8 matrices of data
+  
+  
+  test t1 (
+      .n(n),
+      .instructions(instructions),
+      .matrix(matrix),
+      .result(result)
+    );
+  
+  initial begin
+  
+    // initialize instructions
+    for (i = 0; i <= 7; i = i + 1) begin
+      instructions[i] = 0;
+    end
+    instructions[0] = 5;
+    instructions[1] = 4;
+    instructions[2] = 1;
+    instructions[3] = 2;
+    instructions[4] = 3;
+
+
+    for (i = 0; i <= 3; i = i + 1) begin // make array all 
+      for (j = 0; j <= 240; j = j + 1) begin
+        matrix[i][j] = 0;
+      end
+    end
+
+    for (i = 0; i <= 3; i = i + 1) begin // make array 1s
+      for (j = 0; j <= 4; j = j + 1) begin
+        matrix[i][i+j] = mval;
+        mval = mval + 1;
+      end
+    end
+
+    mval = -1;
+    for (i = 0; i <= 3; i = i + 1) begin // make array 1s
+      for (j = 11; j <= 14; j = j + 1) begin
+        matrix[i][i+j] = mval;
+        mval = mval + 1;
+      end
+    end
+
+    mval = -1;
+    for (i = 0; i <= 3; i = i + 1) begin // make array 1s
+      for (j = 22; j <= 22; j = j + 1) begin
+        matrix[i][i+j] = mval;
+        mval = mval + 1;
+      end
+    end
+
+    mval = -1;
+    for (i = 0; i <= 3; i = i + 1) begin // make array 1s
+      for (j = 30; j <= 31; j = j + 1) begin
+        matrix[i][i+j] = mval;
+        mval = mval + 1;
+      end
+    end
+
+    mval = -1;
+    for (i = 0; i <= 3; i = i + 1) begin // make array 1s
+      for (j = 39; j <= 41; j = j + 1) begin
+        matrix[i][i+j] = mval;
+        mval = mval + 1;
+      end
+    end
+
+    for (i = 0; i <= 127; i = i + 1) begin
+      result[i] = 32'd14;
+    end
+    
+  end
+endmodule
+
+module test(
+  input wire [3:0] n, // number of instructions
+  input wire [3:0] instructions[0:7], // 7 instructions max, last is 0
+  input wire [15:0] matrix[0:3][0:255], // total memory size, 4 by x_1 + x_2...x_n + padding
+  input wire [31:0] result[0:127] // stores 8 matrices of data
+);
 
     reg clk, rst;
     reg [9:0] addrA, addrB;
@@ -11,11 +103,7 @@ module testbench();
     reg enA, enB, enI;
     reg ap_start;
     wire ap_done;
-
-  	reg [3:0] instructions[7:0]; // 8 instructions
-  reg [15:0] matrix[0:3][0:255]; // 4 by 2 array
-    
-  wire [3:0] check;
+  	wire [3:0] inst;
   
     top circuit(
         .clk(clk),
@@ -33,85 +121,25 @@ module testbench();
         .dataO(dataO),
         .ap_start(ap_start),
       .ap_done(ap_done),
-      .currInstruction(check)
+      .currInstruction(inst)
     );
 
-
-    integer i,j;
-  reg [15:0] mval = -1;
-
+    integer i,j, count;
+ 
     initial begin
         clk = 0;
         rst = 1; #27; rst = 0;  // reset
-      
-      	// initialize instructions
-        for (i = 0; i <= 7; i = i + 1) begin
-          instructions[i] = 0;
-        end
-      instructions[0] = 5;
-      instructions[1] = 4;
-      instructions[2] = 1;
-      instructions[3] = 2;
-      instructions[4] = 3;
-      
-		// init arrays
-        for (i = 0; i <= 3; i = i + 1) begin // make array all 
-          for (j = 0; j <= 50; j = j + 1) begin
-                matrix[i][j] = 0;
-            end
-        end
-
-        for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-          for (j = 0; j <= 4; j = j + 1) begin
-            matrix[i][i+j] = mval;
-            mval = mval + 1;
-            end
-        end
-      
-      	mval = -1;
-        for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-          for (j = 11; j <= 14; j = j + 1) begin
-            matrix[i][i+j] = mval;
-            mval = mval + 1;
-            end
-        end
-      
-      	mval = -1;
-        for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-          for (j = 22; j <= 22; j = j + 1) begin
-            matrix[i][i+j] = mval;
-            mval = mval + 1;
-            end
-        end
-      
-      	mval = -1;
-        for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-          for (j = 30; j <= 31; j = j + 1) begin
-            matrix[i][i+j] = mval;
-            mval = mval + 1;
-            end
-        end
-      
-      	mval = -1;
-        for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-          for (j = 39; j <= 41; j = j + 1) begin
-            matrix[i][i+j] = mval;
-            mval = mval + 1;
-            end
-        end
-      
       
       
       	// write to memA/memB
         enA = 1;
         enB = 1;
         for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-          for (j = 0; j <= 50; j = j + 1) begin
+          for (j = 0; j <= 255; j = j + 1) begin
                 dataA = matrix[i][j];
                 dataB = matrix[i][j];
                 addrA = 256 * i + j; // length * row + col
                 addrB = 256 * i + j;
-              //$display("i = %d, j = %d, enA = %b, enB = %b, dataA = %d, dataB = %d, addrA = %d, addrB = %d, %d", i, j, enA, enB, dataA, dataB, addrA, addrB, matrix[i][j]);
               #10;
             end
         end
@@ -121,9 +149,8 @@ module testbench();
       	// write instructions
         addrI = 0;
         enI = 1;
-      for (i = 0; i <= 7; i = i + 1) begin
+      	for (i = 0; i <= 7; i = i + 1) begin
           dataI = instructions[i];  
-          //display("addrI = %d, dataI = %d", addrI, dataI);
           #10;
           addrI = addrI + 1;
         end
@@ -138,19 +165,23 @@ module testbench();
     end
   
   
-  
     always begin
         clk = 1; #5; clk = 0; #5; // generate clock
     end
   
     always @(posedge clk) begin
         if (ap_done) begin
+            count = 0;
           	#10
-            for (i = 0; i < 80; i = i + 1) begin
+          	for (i = 0; i < 16 * n; i = i + 1) begin
                 addrO = i;
-                #10; // Simulate one clock cycle delay for display
-              $display("i = %d, dataO = %d", addrO, $signed(dataO));
+                #10;
+             	$display($signed(dataO));
+//                if ($signed(dataO) == $signed()) begin
+  //                count = count + 1
+    //            end
             end
+          	//$display("%d out of %d entries correct", count, n * 16);
             $finish;
         end
     end
