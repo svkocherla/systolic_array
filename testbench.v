@@ -80,7 +80,7 @@ module testbench();
     end
 
     for (i = 0; i <= 127; i = i + 1) begin
-      result[i] = 32'd14;
+      result[i] = 32'd2;
     end
     
   end
@@ -177,11 +177,11 @@ module test(
                 addrO = i;
                 #10;
              	$display($signed(dataO));
-//                if ($signed(dataO) == $signed()) begin
-  //                count = count + 1
-    //            end
+              	if (dataO == result[i]) begin
+                  count = count + 1;
+                end
             end
-          	//$display("%d out of %d entries correct", count, n * 16);
+          	$display("%d out of %d entries correct", count, n * 16);
             $finish;
         end
     end
