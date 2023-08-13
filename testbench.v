@@ -48,38 +48,65 @@ module testbench();
         for (i = 0; i <= 7; i = i + 1) begin
           instructions[i] = 0;
         end
-      instructions[0] = 4;
-      instructions[1] = 1;
-        instructions[2] = 0;
-        instructions[3] = 0;
+      instructions[0] = 5;
+      instructions[1] = 4;
+      instructions[2] = 1;
+      instructions[3] = 2;
+      instructions[4] = 3;
       
 		// init arrays
         for (i = 0; i <= 3; i = i + 1) begin // make array all 
-          for (j = 0; j <= 20; j = j + 1) begin
+          for (j = 0; j <= 50; j = j + 1) begin
                 matrix[i][j] = 0;
             end
         end
 
         for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-          for (j = 0; j <= 3; j = j + 1) begin
+          for (j = 0; j <= 4; j = j + 1) begin
             matrix[i][i+j] = mval;
             mval = mval + 1;
             end
         end
+      
       	mval = 1;
         for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-          for (j = 10; j <= 10; j = j + 1) begin
-            matrix[i][i+j] = 1;//mval;
-            //mval = mval + 1;
+          for (j = 11; j <= 14; j = j + 1) begin
+            matrix[i][i+j] = mval;
+            mval = mval + 1;
             end
         end
-      //matrix[0][10] = 3;
+      
+      	mval = 1;
+        for (i = 0; i <= 3; i = i + 1) begin // make array 1s
+          for (j = 22; j <= 22; j = j + 1) begin
+            matrix[i][i+j] = mval;
+            mval = mval + 1;
+            end
+        end
+      
+      	mval = 1;
+        for (i = 0; i <= 3; i = i + 1) begin // make array 1s
+          for (j = 30; j <= 31; j = j + 1) begin
+            matrix[i][i+j] = mval;
+            mval = mval + 1;
+            end
+        end
+      
+      	mval = 1;
+        for (i = 0; i <= 3; i = i + 1) begin // make array 1s
+          for (j = 39; j <= 41; j = j + 1) begin
+            matrix[i][i+j] = mval;
+            mval = mval + 1;
+            end
+        end
+      
+      
       
       	// write to memA/memB
         enA = 1;
         enB = 1;
         for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-        	for (j = 0; j <= 20; j = j + 1) begin
+          for (j = 0; j <= 50; j = j + 1) begin
                 dataA = matrix[i][j];
                 dataB = matrix[i][j];
                 addrA = 256 * i + j; // length * row + col

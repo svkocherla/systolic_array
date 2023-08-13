@@ -153,7 +153,6 @@ module top(
                 end
                 else if (renI == 1) begin // if just read instruction, dont read more and set counter
                     renI <= 0;
-                    rst_sa <= 0;
                     counter <= currInstruction + 7;
                     if (currInstruction == 0) begin
                         ap_done <= 1;
@@ -162,6 +161,7 @@ module top(
                   $display("PATHB");
                 end
               else if (counter != 0) begin // do N+7 clock cycles
+                	rst_sa <= 0;
                     renA <= 1;
                     renB <= 1;
                     counter <= counter - 1;
