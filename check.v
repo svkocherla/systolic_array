@@ -262,7 +262,7 @@ module output_memory(
         end
         if (read) begin
             dataO <= memory[addrO];
-          $display("in read, dataO = %d, addrO = %d", memory[addrO], addrO );
+          //$display("in read, dataO = %d, addrO = %d", memory[addrO], addrO );
         end
     end
 

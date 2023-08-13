@@ -141,12 +141,17 @@ module testbench();
   
     always begin
         clk = 1; #5; clk = 0; #5; // generate clock
+    end
+  
+    always @(posedge clk) begin
         if (ap_done) begin
-          for (i = 0; i < 80; i = i + 1) begin
-            addrO = i;
-            $display("i = %d, dataO = %d", addrO, dataO);
-          end
-          $finish;
+          	#10
+            for (i = 0; i < 80; i = i + 1) begin
+                addrO = i;
+                #10; // Simulate one clock cycle delay for display
+              $display("i = %d, dataO = %d", addrO, $signed(dataO));
+            end
+            $finish;
         end
     end
 
