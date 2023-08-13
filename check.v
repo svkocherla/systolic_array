@@ -1,8 +1,3 @@
-`include "inputMem.v"
-`include "outputMem.v"
-`include "instMem.v"
-`include "array.v"
-
 module top(
     input wire clk,
     input wire rst,
@@ -18,7 +13,8 @@ module top(
     input wire [3:0] addrO, // 2^4 = 4 x 4 = 16 possibilities
     output wire [31:0] dataO, // 32 bit result for each processor
     input wire ap_start, // pulse start
-    output reg ap_done // level end 
+    output reg ap_done, // level end 
+    output wire [3:0] currInstruction
 );
 
     wire [15:0] outA [0:3];
@@ -32,7 +28,7 @@ module top(
     reg renO = 0;
     reg wenO = 0; // write enable O
 
-    wire [3:0] currInstruction = 0; // defined here
+    // wire [3:0] currInstruction = 0; // defined here
 
     input_memory memA (
         .clk(clk),
@@ -137,35 +133,42 @@ module top(
 
     reg running = 0;
     reg started = 0;
-    reg [5:0] counter = 0;
-
-    always @(posedge clk or ap_start) begin
+    reg [4:0] counter = 0;
+  
+  always @(negedge clk or ap_start) begin // needs to be negedge for some reason
         if (ap_start) begin
             running <= 1;
         end
         else begin
             if (running == 1) begin
+          $display("rst = %b, addrA = %d, dataA = %d, enA = %b, addrB = %d, dataB = %d, enB = %b, addrI = %d, dataI = %d, enI = %d, addrO = %d, renI = %d, currInstruction = %d, counter = %d", rst, addrA, dataA, enA, addrB, dataB, enB, addrI, dataI, enI, addrO, renI, currInstruction, counter);
                 if (started == 0) begin // step 2, read instruction
+                    wenO <= 0;
                     renI <= 1;
                     started <= 1;
+                  $display("pathA");
                 end
                 else if (renI == 1) begin // if just read instruction, dont read more and set counter
                     renI <= 0;
                     counter <= currInstruction + 3;
                     if (currInstruction == 0) begin
                         ap_done <= 1;
+                        running <= 0;
                     end
+                  $display("PATHB");
                 end
                 else if (counter != 0) begin // do N+3 clock cycles
                     renA <= 1;
                     renB <= 1;
                     counter <= counter - 1;
+                  $display("pathC");
                 end
                 else if (counter == 0) begin // write to memory
                     renA <= 0;
                     renB <= 0;
                     wenO <= 1;
                     started <= 0;
+                  $display("pathD");
                 end
             end
         end
@@ -188,13 +191,15 @@ module instruction_memory(
     reg [2:0] counter = 0; // instruction counter, goes up to 8
     // maybe put first value in instructions[1] depending on bugs
 
-    always @(posedge clk) begin
+  always @(posedge clk) begin
         if (en) begin
-            instructions[addrI] <= dataI;
+          instructions[addrI] <= dataI;
+          //$display("addrI = %d, valI = %d, i0 = %d", addrI, dataI, instructions[addrI - 1]);
         end
         if (read) begin
             value <= instructions[counter];
             counter <= counter + 1;
+          //$display("reading instruction, counter = %d, value = %d", counter, instructions[counter]);
         end
     end
 
@@ -247,6 +252,8 @@ module output_memory(
             memory[counter + 14] <= c14;
             memory[counter + 15] <= c15;
             counter <= counter + 16;
+            $display("en = %b, read = %b, c0 = %d, c1 = %d, c2 = %d, c3 = %d, c4 = %d, c5 = %d, c6 = %d, c7 = %d, c8 = %d, c9 = %d, c10 = %d, c11 = %d, c12 = %d, c13 = %d, c14 = %d, c15 = %d", en, read, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15);
+
         end
         if (read) begin
             dataO <= memory[addrO];

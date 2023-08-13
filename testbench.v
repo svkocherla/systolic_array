@@ -1,5 +1,4 @@
 
-`include "check.v"
 module testbench();
 
     reg clk, rst;
@@ -16,6 +15,8 @@ module testbench();
   	reg [3:0] instructions[7:0]; // 8 instructions
     reg [15:0] matrix[0:3][0:6]; // 4 by 2 array
     
+  wire [3:0] check;
+  
     top circuit(
         .clk(clk),
         .rst(rst),
@@ -31,7 +32,8 @@ module testbench();
         .addrO(addrO),
         .dataO(dataO),
         .ap_start(ap_start),
-        .ap_done(ap_done)
+      .ap_done(ap_done),
+      .currInstruction(check)
     );
 
 
@@ -45,8 +47,11 @@ module testbench();
         for (i = 0; i <= 7; i = i + 1) begin
           instructions[i] = 0;
         end
-      instructions[0] = 4;
-        
+        instructions[0] = 4;
+        instructions[1] = 0;
+        instructions[2] = 2;
+        instructions[3] = 1;
+      
 		// init arrays
         for (i = 0; i <= 3; i = i + 1) begin // make array all 
             for (j = 0; j <= 6; j = j + 1) begin
@@ -70,26 +75,29 @@ module testbench();
                 dataB = matrix[i][j];
                 addrA = 256 * i + j; // length * row + col
                 addrB = 256 * i + j;
-              $display("i = %d, j = %d, enA = %b, enB = %b, dataA = %d, dataB = %d, addrA = %d, addrB = %d, %d", i, j, enA, enB, dataA, dataB, addrA, addrB, matrix[i][j]);
+              //$display("i = %d, j = %d, enA = %b, enB = %b, dataA = %d, dataB = %d, addrA = %d, addrB = %d, %d", i, j, enA, enB, dataA, dataB, addrA, addrB, matrix[i][j]);
+              #10;
             end
         end
         enA = 0;
         enB = 0;
 
       	// write instructions
-      	addrI = 0;
+        addrI = 0;
         enI = 1;
-        for (i = 0; i <= 7; i = i + 1) begin
+      for (i = 0; i <= 7; i = i + 1) begin
           dataI = instructions[i];  
+          //display("addrI = %d, dataI = %d", addrI, dataI);
+          #10;
           addrI = addrI + 1;
-          $display("addrI = %d, dataI = %d", dataI, addrI);
         end
       	enI = 0;
+        #10;
       
       
       	// start program
       	ap_start <= 1;
-      	#7
+      	#10
       	ap_start <= 0;
     end
   
@@ -97,13 +105,9 @@ module testbench();
   
     always begin
         clk = 1; #5; clk = 0; #5; // generate clock
+      $display("cc");
     end
 
-  
-  	always @(negedge clk) begin //check for ap done
-      if (1 == ap_done) begin
-        $display("ap_done = %d", ap_done);
-      end
-    end
+ 
 
 endmodule
