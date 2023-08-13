@@ -38,7 +38,7 @@ module testbench();
 
 
     integer i,j;
-  reg [15:0] mval = 1;
+  reg [15:0] mval = -1;
 
     initial begin
         clk = 0;
@@ -68,7 +68,7 @@ module testbench();
             end
         end
       
-      	mval = 1;
+      	mval = -1;
         for (i = 0; i <= 3; i = i + 1) begin // make array 1s
           for (j = 11; j <= 14; j = j + 1) begin
             matrix[i][i+j] = mval;
@@ -76,7 +76,7 @@ module testbench();
             end
         end
       
-      	mval = 1;
+      	mval = -1;
         for (i = 0; i <= 3; i = i + 1) begin // make array 1s
           for (j = 22; j <= 22; j = j + 1) begin
             matrix[i][i+j] = mval;
@@ -84,7 +84,7 @@ module testbench();
             end
         end
       
-      	mval = 1;
+      	mval = -1;
         for (i = 0; i <= 3; i = i + 1) begin // make array 1s
           for (j = 30; j <= 31; j = j + 1) begin
             matrix[i][i+j] = mval;
@@ -92,7 +92,7 @@ module testbench();
             end
         end
       
-      	mval = 1;
+      	mval = -1;
         for (i = 0; i <= 3; i = i + 1) begin // make array 1s
           for (j = 39; j <= 41; j = j + 1) begin
             matrix[i][i+j] = mval;
@@ -141,7 +141,13 @@ module testbench();
   
     always begin
         clk = 1; #5; clk = 0; #5; // generate clock
-      $display("cc");
+        if (ap_done) begin
+          for (i = 0; i < 80; i = i + 1) begin
+            addrO = i;
+            $display("i = %d, dataO = %d", addrO, dataO);
+          end
+          $finish;
+        end
     end
 
  

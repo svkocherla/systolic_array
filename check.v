@@ -148,7 +148,7 @@ module top(
                     renI <= 1;
                     started <= 1;
                   	rst_sa <= 1; // add line to reset processing registers
-                  $display("pathA");
+                  //$display("pathA");
 
                 end
                 else if (renI == 1) begin // if just read instruction, dont read more and set counter
@@ -157,22 +157,23 @@ module top(
                     if (currInstruction == 0) begin
                         ap_done <= 1;
                         running <= 0;
+                        renO <= 1;
                     end
-                  $display("PATHB");
+                  //$display("PATHB");
                 end
               else if (counter != 0) begin // do N+7 clock cycles
                 	rst_sa <= 0;
                     renA <= 1;
                     renB <= 1;
                     counter <= counter - 1;
-                $display("pathC");
+                //$display("pathC");
               end
                 else if (counter == 0) begin // write to memory
                     renA <= 0;
                     renB <= 0;
                     wenO <= 1;
                   started <= 0;
-                  $display("pathD");
+                  //$display("pathD");
                 end
             end
         end
@@ -261,6 +262,7 @@ module output_memory(
         end
         if (read) begin
             dataO <= memory[addrO];
+          $display("in read, dataO = %d, addrO = %d", memory[addrO], addrO );
         end
     end
 
@@ -321,7 +323,7 @@ module processor(clk, rst, in_a, in_b, out_a, out_b, out_c);
         end
         else begin
 			if ((in_a !== 16'bx) && (in_b !== 16'bx)) begin
-              out_c <= out_c + in_a*in_b;
+			  out_c <= $signed(out_c) + $signed(in_a) * $signed(in_b);
               out_a <= in_a;
               out_b <= in_b;
               //$display("outc = %d, in_a %d, in_b %d", out_c, in_a, in_b);
