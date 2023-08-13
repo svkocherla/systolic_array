@@ -1,3 +1,8 @@
+`include "inputMem.v"
+`include "outputMem.v"
+`include "instMem.v"
+`include "array.v"
+
 module top(
     input wire clk,
     input wire rst,
@@ -13,7 +18,7 @@ module top(
     input wire [3:0] addrO, // 2^4 = 4 x 4 = 16 possibilities
     output wire [31:0] dataO, // 32 bit result for each processor
     input wire ap_start, // pulse start
-    output wire ap_end // level end 
+    output reg ap_done // level end 
 );
 
     wire [15:0] outA [0:3];
@@ -147,6 +152,9 @@ module top(
                 else if (renI == 1) begin // if just read instruction, dont read more and set counter
                     renI <= 0;
                     counter <= currInstruction + 3;
+                    if (currInstruction == 0) begin
+                        ap_done <= 1;
+                    end
                 end
                 else if (counter != 0) begin // do N+3 clock cycles
                     renA <= 1;
