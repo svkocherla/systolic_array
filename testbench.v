@@ -49,7 +49,7 @@ module testbench();
           instructions[i] = 0;
         end
       instructions[0] = 4;
-        instructions[1] = 0;
+      instructions[1] = 1;
         instructions[2] = 0;
         instructions[3] = 0;
       
@@ -66,7 +66,14 @@ module testbench();
             mval = mval + 1;
             end
         end
-      //matrix[1][1] = 1;
+      	mval = 1;
+        for (i = 0; i <= 3; i = i + 1) begin // make array 1s
+          for (j = 10; j <= 10; j = j + 1) begin
+            matrix[i][i+j] = 1;//mval;
+            //mval = mval + 1;
+            end
+        end
+      //matrix[0][10] = 3;
       
       	// write to memA/memB
         enA = 1;

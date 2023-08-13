@@ -27,6 +27,7 @@ module top(
     reg renI = 0;
     reg renO = 0;
     reg wenO = 0; // write enable O
+    reg rst_sa = 0;
 
     // wire [3:0] currInstruction = 0; // defined here
 
@@ -92,7 +93,7 @@ module top(
 
     systolic_array sa (
         .clk(clk),
-        .rst(rst),
+      .rst(rst | rst_sa),
         .in_a0(outA[0]),
         .in_a1(outA[1]),
         .in_a2(outA[2]),
@@ -146,10 +147,13 @@ module top(
                     wenO <= 0;
                     renI <= 1;
                     started <= 1;
+                  	rst_sa <= 1; // add line to reset processing registers
                   $display("pathA");
+
                 end
                 else if (renI == 1) begin // if just read instruction, dont read more and set counter
                     renI <= 0;
+                    rst_sa <= 0;
                     counter <= currInstruction + 7;
                     if (currInstruction == 0) begin
                         ap_done <= 1;
@@ -161,17 +165,13 @@ module top(
                     renA <= 1;
                     renB <= 1;
                     counter <= counter - 1;
-                  $display("pathC");
-                //for (int i = 0; i <= 15; i = i + 1) begin
-                  //  $display("outO[%0d] = %d", i, outO[i]);
-                //end
-
-                end
+                $display("pathC");
+              end
                 else if (counter == 0) begin // write to memory
                     renA <= 0;
                     renB <= 0;
                     wenO <= 1;
-                    started <= 0;
+                  started <= 0;
                   $display("pathD");
                 end
             end
