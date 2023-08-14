@@ -1,4 +1,3 @@
-
 module testbench();
   // read tests from file
   // testcase has n * 2 matrices of sizes x_1...x_n, and a result of size n*16
@@ -15,7 +14,7 @@ module testbench();
   reg [15:0] matrixa[0:3][0:255]; // total memory size, 4 by x_1 + x_2...x_n + padding
   reg [15:0] matrixb[0:3][0:255]; // total memory size, 4 by x_1 + x_2...x_n + padding
   reg [31:0] result[0:127]; // stores 8 matrices of data
-  
+
     test t0 ( 
        .n(n[0]), 
        .instructions(instructions),
@@ -23,7 +22,6 @@ module testbench();
       .b(matrixb), 
        .result(result)
        ); 
-  
   
   initial begin
     
@@ -35,7 +33,7 @@ module testbench();
     end
     
     // initialize instructions
-    file_id = $fopen("test_1.txt", "r");
+    file_id = $fopen("test_6.txt", "r");
 
     $fscanf(file_id, "%d", n[0]);
 
@@ -79,6 +77,10 @@ module testbench();
       col = iter;
     end
     
+    $fclose(file_id);
+    
+    
+
   end
 endmodule
 
@@ -173,7 +175,7 @@ module test(
           	for (i = 0; i < 16 * n; i = i + 1) begin
                 addrO = i;
                 #10;
-             	$display($signed(dataO));
+              $display("Expected: %0d, Result: %0d", $signed(result[i]), $signed(dataO));
               	if (dataO == result[i]) begin
                   count = count + 1;
                 end

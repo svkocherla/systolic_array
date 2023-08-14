@@ -65,11 +65,7 @@ def generate_tests(count):
         test_cases.append(gen_test())
     return test_cases
 
-tests = generate_tests(1)
-
-
-
-def write_test_to_file(filename, test_tuple):
+def file_write(filename, test_tuple):
     num_pairs, instructions, test_case, result = test_tuple
 
     with open(filename, "w") as f:
@@ -94,6 +90,32 @@ def write_test_to_file(filename, test_tuple):
                 f.write(" ".join(map(str, row)) + "\n")
 
 
+tests = generate_tests(5)
+
+
 for idx, test in enumerate(tests, start=1):
     filename = f"test_{idx}.txt"
-    write_test_to_file(filename, test)
+    file_write(filename, test)
+
+
+#generate mandatory case
+mandatory_test = []
+mandatory_test.append((generate_matrix(4, 4), transpose(generate_matrix(4, 4))))
+mandatory_test.append((generate_matrix(4, 8), transpose(generate_matrix(8, 4))))
+mandatory_test.append((generate_matrix(4, 16), transpose(generate_matrix(16, 4))))
+
+mand_inst = [4,8,16,0,0,0,0,0]
+mand_res = []
+for case in mandatory_test:
+    res = matrix_multiply(case[0], transpose(case[1]))
+    for i in res:
+        for j in i:
+            mand_res.append(j)
+
+newmat = []
+for i in range(len(mandatory_test)):
+    flag = True if i == 0 else False
+    newmat.append((transform(mandatory_test[i][0],flag),transform(mandatory_test[i][1],flag)))
+
+mand_case = (3, mand_inst, newmat, mand_res)
+file_write(f"test_6.txt", mand_case)
