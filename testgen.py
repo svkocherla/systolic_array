@@ -1,9 +1,9 @@
 import random
 
-num = 7
+num = 3
 minnum = 3
-minlen = 3
-maxLen = 10
+minlen = 16
+maxLen = 18
 
 def generate_matrix(rows, cols):
     return [[random.randint(0, 20) for _ in range(cols)] for _ in range(rows)]

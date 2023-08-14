@@ -9,13 +9,13 @@ module top(
     input wire [15:0] dataB,
     input wire enB,
     input wire [2:0] addrI, // 8 instructions max
-    input wire [3:0] dataI, // max matrix size = 4 x 16
+  input wire [4:0] dataI, // max matrix size = 4 x 31
     input wire enI,
     input wire [6:0] addrO, // 16 * 8 max matrix possibilities
     output wire [31:0] dataO, // 32 bit result for each processor
     input wire ap_start, // pulse start
     output reg ap_done, // level end 
-  	output wire [3:0] currInstruction // max matrix size is 31, change to [4:0]
+  output wire [4:0] currInstruction // max matrix size is 31, change to [4:0]
 );
 
     wire [15:0] outA [0:3];
@@ -133,7 +133,7 @@ module top(
 
     reg running = 0;
     reg started = 0;
-    reg [4:0] counter = 0;
+  	reg [5:0] counter = 0;
   
   always @(negedge clk or ap_start) begin
         if (ap_start) begin
@@ -186,11 +186,11 @@ module instruction_memory(
     input wire en, // for writing
     input wire read, // read enable
     input wire [2:0] addrI, // for writing (2^3 = 8 instructions)
-    input wire [3:0] dataI, // for writing max matrix width 2^4 = 16
-    output reg [3:0] value // value, max matrix size 2^4 = 16
+  input wire [4:0] dataI, // for writing max matrix width 2^4 = 16
+  output reg [4:0] value // value, max matrix size 2^4 = 16
 );
 
-    reg [3:0] instructions [0:7]; // max 8 instructions, max matrix size = 2^4 = 16
+  reg [4:0] instructions [0:7]; // max 8 instructions, max matrix size = 2^4 = 16
 
     reg [2:0] counter = 0; // instruction counter, goes up to 8
     // maybe put first value in instructions[1] depending on bugs

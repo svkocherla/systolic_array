@@ -11,7 +11,7 @@ module testbench();
   integer k;
   
   reg [3:0] n [0:0]; // number of instructions
-  reg [3:0] instructions[0:7]; // 7 instructions max, last is 0
+  reg [4:0] instructions[0:7]; // 7 instructions max, last is 0
   reg [15:0] matrixa[0:3][0:255]; // total memory size, 4 by x_1 + x_2...x_n + padding
   reg [15:0] matrixb[0:3][0:255]; // total memory size, 4 by x_1 + x_2...x_n + padding
   reg [31:0] result[0:127]; // stores 8 matrices of data
@@ -79,25 +79,12 @@ module testbench();
       col = iter;
     end
     
-    for (i = 0; i < 4; i = i + 1) begin
-      for (j = 0; j < 8; j = j + 1) begin
-        $display("matrixa[%0d][%0d] = %0d", i, j, matrixa[i][j]);
-      end
-    end
-
-    for (i = 0; i < 4; i = i + 1) begin
-      for (j = 0; j < 8; j = j + 1) begin
-        $display("matrixb[%0d][%0d] = %0d", i, j, matrixb[i][j]);
-      end
-    end
-    
-    
   end
 endmodule
 
 module test(
   input wire [3:0] n, // number of instructions
-  input wire [3:0] instructions[0:7], // 7 instructions max, last is 0
+  input wire [4:0] instructions[0:7], // 7 instructions max, last is 0
   input wire [15:0] a[0:3][0:255], // total memory size, 4 by x_1 + x_2...x_n + padding
   input wire [15:0] b[0:3][0:255], // total memory size, 4 by x_1 + x_2...x_n + padding
   input wire [31:0] result[0:127] // stores 8 matrices of data
@@ -106,14 +93,14 @@ module test(
     reg clk, rst;
     reg [9:0] addrA, addrB;
     reg [2:0] addrI;
-    reg [3:0] dataI;
+  	reg [4:0] dataI;
     reg [15:0] dataA, dataB;
     wire [31:0] dataO;
     reg [6:0] addrO;
     reg enA, enB, enI;
     reg ap_start;
     wire ap_done;
-  	wire [3:0] inst;
+  	wire [4:0] inst;
   
     top circuit(
         .clk(clk),
