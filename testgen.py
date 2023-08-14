@@ -18,6 +18,15 @@ def transpose(matrix):
     new = [[matrix[i][j] for i in range(r)] for j in range(c)]
     return new
 
+def transform(mat, first):
+    col = len(mat[0])
+    newcol = col + (6 if first else 7)
+    newmat = [[0 for i in range(newcol)] for j in range(len(mat))]
+    for i in range(len(mat)):
+        for j in range(col):
+            newmat[i][i + j] = mat[i][j]
+    return newmat
+
 def gen_test():
     num_pairs = random.randint(1, 6) # n = number of matrices from 1 to 6
     test_case = [] # list of matrices (a,b)
@@ -38,15 +47,12 @@ def gen_test():
         for i in res:
             for j in i:
                 result.append(j)
-
-    # print('num pairs', num_pairs)
-    # print('inst', instructions)
-    # print('case', test_case)
-    # print('result', result)
-
-    return num_pairs, instructions, test_case,  result
-
     
+    proc_mat = []
+    for i in range(len(test_case)):
+        flag = True if i == 0 else False
+        proc_mat.append((transform(test_case[i][0],flag),transform(test_case[i][1],flag)))
+    return num_pairs, instructions, proc_mat,  result
 
 def generate_tests(count):
     test_cases = []
@@ -54,33 +60,35 @@ def generate_tests(count):
         test_cases.append(gen_test())
     return test_cases
 
-tests = generate_tests(5)
+tests = generate_tests(1)
+
+
 
 def write_test_to_file(filename, test_tuple):
     num_pairs, instructions, test_case, result = test_tuple
 
     with open(filename, "w") as f:
-        # Write num_pairs
+        # n
         f.write(f"{num_pairs}\n")
         
-        # Write instructions array
+        # instructions
         f.write(" ".join(map(str, instructions)) + "\n")
 
-        # Write array of matrices a
+
+        # result
+        f.write(" ".join(map(str, result)) + "\n")
+
+        # a
         for a, _ in test_case:
             for row in a:
                 f.write(" ".join(map(str, row)) + "\n")
         
-        # Write array of matrices b
+        # b
         for _, b in test_case:
             for row in b:
                 f.write(" ".join(map(str, row)) + "\n")
 
-        # Write result matrices
-        f.write(" ".join(map(str, result)) + "\n")
 
-
-# Assume tests is a list of test tuples
 for idx, test in enumerate(tests, start=1):
     filename = f"test_{idx}.txt"
     write_test_to_file(filename, test)

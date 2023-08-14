@@ -5,83 +5,93 @@ module testbench();
   // for each test, generate a matrix and instructions
 	  // pass into test module, along with result matrix
   
-  integer i,j;
-  integer mval = -1;
+  integer i,j, file_id;
+  integer col = 0;  
+  integer iter;
+  integer k;
   
-  reg [3:0] n = 5; // number of instructions
-  reg [3:0] instructions[0:7]; // 7 instructions max, last is 0
-  reg [15:0] matrix[0:3][0:255]; // total memory size, 4 by x_1 + x_2...x_n + padding
-  reg [31:0] result[0:127]; // stores 8 matrices of data
+  reg [3:0] n [0:0]; // number of instructions
+  reg [3:0] instructions[0:4][0:7]; // 7 instructions max, last is 0
+  reg [15:0] matrixa[0:4][0:3][0:255]; // total memory size, 4 by x_1 + x_2...x_n + padding
+  reg [15:0] matrixb[0:4][0:3][0:255]; // total memory size, 4 by x_1 + x_2...x_n + padding
+  reg [31:0] result[0:4][0:127]; // stores 8 matrices of data
   
+  //  test t0 ( 
+  //     .n(n[0]), 
+  //     .instructions(instructions[0]),
+  //     .matrix(matrix[0]), 
+  //     .result(result[0])
+  //     ); 
   
-  test t1 (
-      .n(n),
-      .instructions(instructions),
-      .matrix(matrix),
-      .result(result)
-    );
   
   initial begin
-  
-    // initialize instructions
-    for (i = 0; i <= 7; i = i + 1) begin
-      instructions[i] = 0;
-    end
-    instructions[0] = 5;
-    instructions[1] = 4;
-    instructions[2] = 1;
-    instructions[3] = 2;
-    instructions[4] = 3;
-
-
+    
     for (i = 0; i <= 3; i = i + 1) begin // make array all 
       for (j = 0; j <= 240; j = j + 1) begin
-        matrix[i][j] = 0;
+        matrixa[0][i][j] = 0;
+        matrixa[1][i][j] = 0;
+        matrixa[2][i][j] = 0;
+        matrixa[3][i][j] = 0;
+        matrixa[4][i][j] = 0;
+        matrixb[0][i][j] = 0;
+        matrixb[1][i][j] = 0;
+        matrixb[2][i][j] = 0;
+        matrixb[3][i][j] = 0;
+        matrixb[4][i][j] = 0;
       end
     end
+    
+    // initialize instructions
+    file_id = $fopen("test_1.txt", "r");
 
-    for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-      for (j = 0; j <= 4; j = j + 1) begin
-        matrix[i][i+j] = mval;
-        mval = mval + 1;
+    $fscanf(file_id, "%d", n[0]);
+
+    for ( i = 0; i < 8; i = i + 1) begin
+      $fscanf(file_id, "%d", instructions[0][i]);
+    end
+
+    for ( i = 0; i < n[0] * 16; i = i + 1) begin
+      $fscanf(file_id, "%d", result[0][i]);
+    end
+    
+    //read a
+    for (i = 0; i < n[0]; i = i + 1) begin
+      k = instructions[0][i] + 6 + col;
+      if (i != 0) begin
+        k = k + 1;
       end
-    end
-
-    mval = -1;
-    for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-      for (j = 11; j <= 14; j = j + 1) begin
-        matrix[i][i+j] = mval;
-        mval = mval + 1;
+      for (j = 0; j < 4; j = j + 1) begin
+        for (iter = col; iter < k; iter = iter + 1) begin
+          $fscanf(file_id, "%d", matrixa[0][j][iter]);
+          $display("j %0d, col %0d, matrix[0][j][col] %0d, k %0d, col %0d", j, iter, matrixa[0][j][iter], k, col);
+        end
       end
+      col = iter;
     end
-
-    mval = -1;
-    for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-      for (j = 22; j <= 22; j = j + 1) begin
-        matrix[i][i+j] = mval;
-        mval = mval + 1;
+    
+    col = 0;  
+    iter = 0;
+    k = 0;
+    
+    //read b
+    for (i = 0; i < n[0]; i = i + 1) begin
+      k = instructions[0][i] + 6 + col;
+      if (i != 0) begin
+        k = k + 1;
       end
-    end
-
-    mval = -1;
-    for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-      for (j = 30; j <= 31; j = j + 1) begin
-        matrix[i][i+j] = mval;
-        mval = mval + 1;
+      for (j = 0; j < 4; j = j + 1) begin
+        for (iter = col; iter < k; iter = iter + 1) begin
+          $fscanf(file_id, "%d", matrixb[0][j][iter]);
+          //$display("j %0d, col %0d, matrix[0][j][col] %0d, k %0d, col %0d", j, iter, matrix[0][j][iter], k, col);
+        end
       end
+      col = iter;
     end
-
-    mval = -1;
-    for (i = 0; i <= 3; i = i + 1) begin // make array 1s
-      for (j = 39; j <= 41; j = j + 1) begin
-        matrix[i][i+j] = mval;
-        mval = mval + 1;
-      end
-    end
-
-    for (i = 0; i <= 127; i = i + 1) begin
-      result[i] = 32'd2;
-    end
+  
+    
+    
+    
+    
     
   end
 endmodule
