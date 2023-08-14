@@ -67,7 +67,7 @@ module testbench();
     
     //read b
     for (i = 0; i < n[0]; i = i + 1) begin
-      k = instructions[0][i] + 6 + col;
+      k = instructions[i] + 6 + col;
       if (i != 0) begin
         k = k + 1;
       end
@@ -78,7 +78,20 @@ module testbench();
       end
       col = iter;
     end
+    
+    for (i = 0; i < 4; i = i + 1) begin
+      for (j = 0; j < 8; j = j + 1) begin
+        $display("matrixa[%0d][%0d] = %0d", i, j, matrixa[i][j]);
+      end
+    end
 
+    for (i = 0; i < 4; i = i + 1) begin
+      for (j = 0; j < 8; j = j + 1) begin
+        $display("matrixb[%0d][%0d] = %0d", i, j, matrixb[i][j]);
+      end
+    end
+    
+    
   end
 endmodule
 
@@ -178,7 +191,7 @@ module test(
                   count = count + 1;
                 end
             end
-          	$display("%d out of %d entries correct", count, n * 16);
+          $display("%0d out of %0d entries correct", count, n * 16);
             $finish;
         end
     end

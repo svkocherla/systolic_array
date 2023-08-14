@@ -1,5 +1,10 @@
 import random
 
+num = 7
+minnum = 3
+minlen = 3
+maxLen = 10
+
 def generate_matrix(rows, cols):
     return [[random.randint(0, 20) for _ in range(cols)] for _ in range(rows)]
     # generate matrix values
@@ -28,11 +33,11 @@ def transform(mat, first):
     return newmat
 
 def gen_test():
-    num_pairs = random.randint(1, 6) # n = number of matrices from 1 to 6
+    num_pairs = random.randint(minnum, num) # n = number of matrices from 1 to 6
     test_case = [] # list of matrices (a,b)
     instructions = []
     for _ in range(num_pairs):
-        x = random.randint(1, 10) # size of a matrix, make 16 later
+        x = random.randint(minlen, maxLen) # size of a matrix, make 16 later
         instructions.append(x)
         a = generate_matrix(4, x)
         b = generate_matrix(x, 4)
