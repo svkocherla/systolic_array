@@ -10,8 +10,8 @@ Files
 * `testbench.v`: Runs a test case from a file and prints the resulting matrix and how many elements are correct.
 * `testgen.py`: Contains Python code to generate test cases with random instruction length, matrix sizes, and matrix values. Matrices are preprocessed with padding before writing to a file.
 * `cases/`: test cases
- * `test_x.txt`: test case x
- * `mandatory_test.txt`: contains test case with instructions [4,8,16] and random matrices
+  * `test_x.txt`: test case x
+  * `mandatory_test.txt`: contains test case with instructions [4,8,16] and random matrices
 * `results/`
   * `result_x.txt`: test case x results
   * `mandatory_result.txt`: contains results for mandatory_test.txt
