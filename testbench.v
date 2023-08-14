@@ -33,7 +33,7 @@ module testbench();
     end
     
     // initialize instructions
-    file_id = $fopen("test_6.txt", "r");
+    file_id = $fopen("test_1.txt", "r");
 
     $fscanf(file_id, "%d", n[0]);
 
@@ -175,10 +175,13 @@ module test(
           	for (i = 0; i < 16 * n; i = i + 1) begin
                 addrO = i;
                 #10;
-              $display("Expected: %0d, Result: %0d", $signed(result[i]), $signed(dataO));
               	if (dataO == result[i]) begin
+                  $display("Expected: %0d, Result: %0d Passed", $signed(result[i]), $signed(dataO));
                   count = count + 1;
                 end
+              else begin
+                $display("Expected: %0d, Result: %0d Failed", $signed(result[i]), $signed(dataO));
+              end
             end
           $display("%0d out of %0d entries correct", count, n * 16);
             $finish;
